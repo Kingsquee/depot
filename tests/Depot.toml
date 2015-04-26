@@ -1,0 +1,12 @@
+  [depot]
+  name = "depot"            # Name of the depot project.
+  dirs = [                  # Directories that contain a Dependencies.toml
+    "./somewhere_with_dependencies"
+  ]
+  out-dir = "./somewhere_else"
+
+  # Unlike Cargo, if you leave this section out, libraries will be built optimized up the yingyang.
+  [settings]
+  opt-level = 0             # Controls the --opt-level the compiler builds with
+  debug = true              # Controls whether the compiler passes -g or `--cfg ndebug`
+  debug-assertions = true   # Controls whether debug assertions are enabled
