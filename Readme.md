@@ -39,8 +39,6 @@ It searches in the dirs specified for Dependencies.tomls, which look like Cargo'
   git = "https://github.com/AngryLawyer/rust-sdl2.git"
 ```
 
-These
-
 Oh my glob, this code is horrendous.
 ------------------------------------
 
