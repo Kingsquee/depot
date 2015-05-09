@@ -1,5 +1,4 @@
   [depot]
-  name = "depot"            # Name of the depot project.
   dirs = [                  # Directories that contain a Dependencies.toml
     "./somewhere_with_dependencies"
   ]
