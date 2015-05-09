@@ -90,7 +90,7 @@ fn main() {
   let program = args[0].clone();
 
   let mut opts = Options::new();
-  opts.optmulti("d", "dir", "directory that contains a Dependency.toml", "DIR");
+  opts.optmulti("i", "in-dir", "directory that contains a Dependencies.toml", "INDIR");
   opts.optopt("o", "out-dir", "directory that contains the output libraries", "OUTDIR");
   opts.optopt("", "opt-level", "optimize dependencies with possible levels 0-3", "OPTLEVEL");
   opts.optflag("", "debug", "passes -g and/or enables the debug configuration for the compiler");
@@ -109,10 +109,10 @@ fn main() {
   let mut working_dir: PathBuf;
 
   // if the operator passed some dir args
-  if matches.opt_present("d") {
+  if matches.opt_present("i") {
     depot_manifest = DepotManifest {
       depot: DepotProject {
-        dirs: matches.opt_strs("d"),
+        dirs: matches.opt_strs("i"),
         out_dir: Some(matches.opt_str("o").unwrap_or(current_dir.join(DEFAULT_DEPOT_NAME).to_string_lossy().into_owned()))
       },
       settings: DepotProfile {
