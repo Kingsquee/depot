@@ -47,7 +47,7 @@ So for now, it's a hack!
 
 How do I clean the depot?
 -------------------------
-Run cargo clean in the hidden yourdepotname/.yourdepotname-cargoproject directory.
+Run cargo clean in the hidden youroutdir/.cargoproject directory.
 
 Yes.
 
