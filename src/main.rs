@@ -17,7 +17,7 @@ use getopts::Options;
 
 static DEPOT_TOML_NAME:           &'static str = "Depot.toml";
 static DEPENDENCIES_TOML_NAME:    &'static str = "Dependencies.toml";
-static DEFAULT_DEPOT_NAME:        &'static str = "depot";
+static DEFAULT_OUT_DIR_NAME:      &'static str = "depot";
 static CARGO_NAME:                &'static str = "cargoproject";
 static CARGO_PROJECT_TYPE:        &'static str = "lib";
 
@@ -34,8 +34,8 @@ struct DepotManifest {
 
 #[derive(RustcDecodable, RustcEncodable, Debug)]
 struct DepotProject {
-  out_dir: Option<String>,
-  dirs: Vec<String>
+  out_dir: String,
+  in_dirs: Vec<String>
 }
 
 #[derive(RustcDecodable, RustcEncodable, Clone, Default, Debug)]
@@ -106,14 +106,13 @@ fn main() {
   let current_dir = env::current_dir().unwrap();
 
   let mut depot_manifest: DepotManifest;
-  let mut working_dir: PathBuf;
 
   // if the operator passed some dir args
   if matches.opt_present("i") {
     depot_manifest = DepotManifest {
       depot: DepotProject {
-        dirs: matches.opt_strs("i"),
-        out_dir: Some(matches.opt_str("o").unwrap_or(current_dir.join(DEFAULT_DEPOT_NAME).to_string_lossy().into_owned()))
+        in_dirs: matches.opt_strs("i"),
+        out_dir: matches.opt_str("o").unwrap_or(current_dir.join(DEFAULT_OUT_DIR_NAME).to_string_lossy().into_owned())
       },
       settings: DepotProfile {
         opt_level: matches.opt_str("opt-level").unwrap_or(CARGO_DEFAULT_OPT_LEVEL.to_string()).parse().unwrap(),
@@ -121,34 +120,30 @@ fn main() {
         debug_assertions: matches.opt_str("debug-assertions").unwrap_or(CARGO_DEFAULT_DEBUG_ASSERTIONS.to_string()).parse().unwrap()
       }
     };
-    working_dir = current_dir;
 
   // else if no args, we check the current directory for a depot config toml
   } else if matches.free.is_empty() {
     let depot_toml_path = current_dir.clone().join(DEPOT_TOML_NAME);
     depot_manifest = parse_depot_toml(&depot_toml_path);
-    working_dir = current_dir;
 
   // else the operator should have passed a path to a depot config toml
   } else {
     let depot_toml_path = PathBuf::from(matches.free[0].clone());
     depot_manifest = parse_depot_toml(&depot_toml_path);
-    working_dir = depot_toml_path.clone();
-    working_dir.pop();
   };
 
-
-  let mut dep_toml_dirs = Vec::new();
-  for string in depot_manifest.depot.dirs.iter() {
-    dep_toml_dirs.push(PathBuf::from(string));
-  }
+  let in_dirs = &depot_manifest.depot.in_dirs;
 
   // Get the Dependency.tomls
-  let mut dependency_tomls: Vec<PathBuf> = Vec::with_capacity(dep_toml_dirs.len());
+  if in_dirs.len() == 0 {
+    panic!("ERROR: No in-dirs supplied.")
+  }
+
+  let mut dependency_tomls: Vec<PathBuf> = Vec::with_capacity(in_dirs.len());
 
   //TODO: Make this search subdirectories too
-  for dir in dep_toml_dirs.iter() {
-    let dependencies_toml = dir.clone().join(DEPENDENCIES_TOML_NAME);
+  for dir in in_dirs.iter() {
+    let dependencies_toml = PathBuf::from(dir).join(DEPENDENCIES_TOML_NAME);
 
     if dependencies_toml.exists() && dependencies_toml.is_file() {
       dependency_tomls.push(dependencies_toml);
@@ -286,10 +281,7 @@ debug_assertions = depot_manifest.settings.debug_assertions,
 dependencies = toml::encode_str(&final_manifest),
 crate_type = CARGO_PROJECT_TYPE);
 
-  let out_dir = match &depot_manifest.depot.out_dir {
-    &Some(ref string) => PathBuf::from(string),
-    &None => PathBuf::from(working_dir),
-  };
+  let out_dir = PathBuf::from(&depot_manifest.depot.out_dir);
 
   let cargo_project_name = CARGO_NAME;
   let hidden_cargo_dir_name = ".".to_string() + &cargo_project_name;
@@ -330,6 +322,9 @@ crate_type = CARGO_PROJECT_TYPE);
 
     // Done!
   } else {
+    if !out_dir.exists() {
+      fs::create_dir_all(&out_dir).unwrap();
+    }
     Command::new("cargo")
       .arg("new")
       .arg(&cargo_project_name)
@@ -361,7 +356,7 @@ crate_type = CARGO_PROJECT_TYPE);
 
   // Done!
   }
-  println!("Build complete.");
+  println!("Build complete. Dependencies are available in {}", out_dir.as_os_str().to_string_lossy());
 
 }
 
