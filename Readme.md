@@ -19,8 +19,7 @@ This is where things go bad. Rust's already geologic compiletimes are exacerbate
 
 ```toml
   [depot]
-  name = "depot"            # Name of the depot project.
-  dirs = [                  # Directories that contain a Dependencies.toml
+  in-dirs = [               # Directories that contain a Dependencies.toml
     "./somewhere_with_dependencies"
   ]
   out-dir = "./somewhere_else"
