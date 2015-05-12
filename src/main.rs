@@ -1,10 +1,8 @@
-#![feature(unicode)]
 #![feature(path_ext)]
 
 extern crate toml;
 extern crate getopts;
 extern crate rustc_serialize;
-extern crate unicode;
 
 use std::path::{PathBuf, Path};
 use std::fs;

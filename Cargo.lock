@@ -1,9 +1,9 @@
 [root]
-name = "Depot"
+name = "depot"
 version = "0.0.1"
 dependencies = [
  "getopts 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)",
- "rustc-serialize 0.3.12 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rustc-serialize 0.3.14 (registry+https://github.com/rust-lang/crates.io-index)",
  "toml 0.1.20 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -17,7 +17,7 @@ dependencies = [
 
 [[package]]
 name = "libc"
-version = "0.1.6"
+version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
@@ -25,12 +25,12 @@ name = "log"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "libc 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libc 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "rustc-serialize"
-version = "0.3.12"
+version = "0.3.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
@@ -38,6 +38,6 @@ name = "toml"
 version = "0.1.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "rustc-serialize 0.3.12 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rustc-serialize 0.3.14 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
